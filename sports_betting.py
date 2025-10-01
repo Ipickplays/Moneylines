@@ -246,7 +246,7 @@ html_content = f"""
 </html>
 """
 
-with open("predictions.html", "w", encoding="utf-8") as f:
+with open("index.html", "w", encoding="utf-8") as f:  # Changed from "predictions.html" to "index.html"
     f.write(html_content)
 
-print("Predictions saved to predictions.html")
+print("Predictions saved to index.html")  # Updated message to reflect new file name
