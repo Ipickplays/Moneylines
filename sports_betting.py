@@ -19,7 +19,6 @@ leagues = {
 }
 
 MAX_API_RETRIES = 3
-MAX_GAMES_PER_LEAGUE = 300
 today = datetime.now().strftime('%Y-%m-%d')
 predictions = []
 
@@ -34,7 +33,9 @@ def most_common(lst):
 def fetch_historical_games(path):
     if os.path.exists(path):
         try:
-            return pd.read_csv(path, encoding='latin1', on_bad_lines='skip')
+            df = pd.read_csv(path, encoding='latin1', on_bad_lines='skip')
+            df = df[pd.to_datetime(df['date'], errors='coerce').notna()]
+            return df
         except Exception as e:
             print(f"Error reading {path}: {e}")
     return pd.DataFrame(columns=['date','home_team','away_team','outcome','home_score','away_score'])
@@ -84,6 +85,14 @@ def train_model(df, team_stats, h2h_stats):
         home = row['home_team']
         away = row['away_team']
 
+        try:
+            last_game_home = team_stats.get(home, {'last_game': today})['last_game']
+            last_game_away = team_stats.get(away, {'last_game': today})['last_game']
+            rest_days_home = (datetime.now() - datetime.strptime(last_game_home, "%Y-%m-%d")).days
+            rest_days_away = (datetime.now() - datetime.strptime(last_game_away, "%Y-%m-%d")).days
+        except:
+            rest_days_home, rest_days_away = 0, 0
+
         home_form = sum(team_stats.get(home,{'form':[3]})['form'][-5:])
         away_form = sum(team_stats.get(away,{'form':[3]})['form'][-5:])
         home_avg_points = np.mean(team_stats.get(home,{'points_scored':[0]})['points_scored'][-15:])
@@ -94,8 +103,6 @@ def train_model(df, team_stats, h2h_stats):
         h2h_home = h2h_stats.get(pair,{'home_wins':0})['home_wins']
         h2h_away = h2h_stats.get(pair,{'away_wins':0})['away_wins']
         home_advantage = 1
-        rest_days_home = (datetime.now() - datetime.strptime(team_stats.get(home,{'last_game':today})['last_game'], "%Y-%m-%d")).days
-        rest_days_away = (datetime.now() - datetime.strptime(team_stats.get(away,{'last_game':today})['last_game'], "%Y-%m-%d")).days
 
         X.append([home_form, away_form, home_avg_points, away_avg_points,
                   home_allowed, away_allowed, h2h_home, h2h_away,
@@ -120,17 +127,18 @@ def fetch_odds(sport_key, target_day):
             time.sleep(1)
     return []
 
-# --- Check and reset CSV if offseason (no games in 30+ days) ---
+# --- Reset CSV for offseason leagues (keep headers only) ---
 for league, cfg in leagues.items():
     if os.path.exists(cfg['csv']):
         try:
             hist_df = pd.read_csv(cfg['csv'], on_bad_lines='skip')
+            hist_df = hist_df[pd.to_datetime(hist_df['date'], errors='coerce').notna()]
             if not hist_df.empty:
                 last_game_date = max(pd.to_datetime(hist_df['date'], errors='coerce'))
                 days_since_last_game = (datetime.now() - last_game_date).days
                 if days_since_last_game > 30:
-                    os.remove(cfg['csv'])
-                    print(f"{cfg['csv']} reset because {league} has not played in over 30 days")
+                    hist_df.iloc[0:0].to_csv(cfg['csv'], index=False)
+                    print(f"{cfg['csv']} wiped (offseason), headers kept.")
         except Exception as e:
             print(f"Error checking {cfg['csv']}: {e}")
 
@@ -161,10 +169,15 @@ for league, cfg in leagues.items():
             h2h_home = h2h_stats.get(pair,{'home_wins':0})['home_wins']
             h2h_away = h2h_stats.get(pair,{'away_wins':0})['away_wins']
             home_advantage = 1
-            rest_days_home = (datetime.now() - datetime.strptime(team_stats.get(home,{'last_game':today})['last_game'], "%Y-%m-%d")).days
-            rest_days_away = (datetime.now() - datetime.strptime(team_stats.get(away,{'last_game':today})['last_game'], "%Y-%m-%d")).days
+            try:
+                last_game_home = team_stats.get(home, {'last_game': today})['last_game']
+                last_game_away = team_stats.get(away, {'last_game': today})['last_game']
+                rest_days_home = (datetime.now() - datetime.strptime(last_game_home, "%Y-%m-%d")).days
+                rest_days_away = (datetime.now() - datetime.strptime(last_game_away, "%Y-%m-%d")).days
+            except:
+                rest_days_home, rest_days_away = 0, 0
 
-            # Skip adding matchup to CSV until outcome is known
+            # Skip matchup until outcome is known
             if not h2h_history.get(pair):
                 continue
 
@@ -173,55 +186,51 @@ for league, cfg in leagues.items():
                                     home_advantage, rest_days_home, rest_days_away]])
             pred = clf.predict(pred_input)[0]
             conf_raw = clf.predict_proba(pred_input)[0][pred] if hasattr(clf,"predict_proba") else 0.6
-
             recommended = "Yes" if conf_raw >= 0.7 else "No"
 
-            # Odds mode mapping to prevent mix-up
+            # Odds mode mapping (-110 to +130)
             home_prices = []
             away_prices = []
             for bookmaker in g.get('bookmakers', []):
                 try:
                     outcomes = bookmaker.get('markets',[{}])[0].get('outcomes', [])
-                    if len(outcomes) >= 2:
-                        for o in outcomes:
-                            if o['name'] == home:
-                                home_prices.append(o.get('price'))
-                            elif o['name'] == away:
-                                away_prices.append(o.get('price'))
+                    for o in outcomes:
+                        if o['name']==home and -110 <= o.get('price',0) <= 130:
+                            home_prices.append(o.get('price'))
+                        elif o['name']==away and -110 <= o.get('price',0) <= 130:
+                            away_prices.append(o.get('price'))
                 except:
                     continue
 
             home_price_mode = most_common([p for p in home_prices if p is not None])
             away_price_mode = most_common([p for p in away_prices if p is not None])
 
-            # --- Odds filter between -110 and +130 ---
-            if home_price_mode is not None and away_price_mode is not None:
-                if -110 <= home_price_mode <= 130 and -110 <= away_price_mode <= 130:
-                    predictions.append({
-                        'matchup': f"{away} @ {home}",
-                        'predicted_winner': home if pred==1 else away,
-                        'confidence': recommended,
-                        'recommended_bet': recommended,
-                        'home_odds': home_price_mode,
-                        'away_odds': away_price_mode
-                    })
+            # Skip if odds invalid
+            if home_price_mode is None or away_price_mode is None:
+                continue
 
-            # --- Append to CSV if outcome exists ---
+            predictions.append({
+                'matchup': f"{away} @ {home}",
+                'predicted_winner': home if pred==1 else away,
+                'confidence': recommended,
+                'recommended_bet': recommended,
+                'home_odds': home_price_mode,
+                'away_odds': away_price_mode
+            })
+
+            # Append new row if outcome exists
             outcome_known = any([home in h2h_history[pair][-1:] or away in h2h_history[pair][-1:]])
             if outcome_known:
                 new_row = {'date': today, 'home_team': home, 'away_team': away,
                            'outcome': pred, 'home_score': None, 'away_score': None}
-                if not ((hist_df['home_team'] == home) & (hist_df['away_team'] == away) & (hist_df['date'] == today)).any():
+                if not ((hist_df['home_team']==home) & (hist_df['away_team']==away) & (hist_df['date']==today)).any():
                     new_rows.append(new_row)
 
         except Exception as e:
-            print(f"Error processing game {g.get('home_team')} @ {g.get('away_team')}: {e}")
+            print(f"Error processing {g.get('home_team')} @ {g.get('away_team')}: {e}")
 
-    # --- Append new games and prune old ones ---
     if new_rows:
         hist_df = pd.concat([hist_df, pd.DataFrame(new_rows)], ignore_index=True)
-    if len(hist_df) > MAX_GAMES_PER_LEAGUE:
-        hist_df = hist_df.tail(MAX_GAMES_PER_LEAGUE)
     hist_df.to_csv(cfg['csv'], index=False, encoding='utf-8')
 
 # --- Output HTML ---
@@ -261,4 +270,3 @@ os.system('git commit -m "Update predictions"')
 os.system("git push origin main")
 print("Pushed updated index.html to GitHub")
 os.system("shutdown /s /t 60 /f")
-
