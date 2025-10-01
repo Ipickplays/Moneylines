@@ -246,7 +246,17 @@ html_content = f"""
 </html>
 """
 
-with open("index.html", "w", encoding="utf-8") as f:  # Changed from "predictions.html" to "index.html"
+with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("Predictions saved to index.html")  # Updated message to reflect new file name
+print("Predictions saved to index.html")
+
+# --- Auto-push to GitHub ---
+os.system("git add .")
+os.system('git commit -m "Update predictions"')
+os.system("git push origin main")
+print("Pushed updated index.html to GitHub")
+
+# --- Shut down PC after running ---
+os.system("shutdown /s /t 60 /f")
+
