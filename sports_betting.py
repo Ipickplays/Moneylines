@@ -18,10 +18,8 @@ leagues = {
     'MLB': {'sport_key': 'baseball_mlb', 'csv': 'mlb_data.csv'}
 }
 
-record_csvs = {
-    'all_time': 'all_time_record.csv'
-}
-
+# --- Record CSVs ---
+record_csvs = {'all_time': 'all_time_record.csv'}
 for league in leagues:
     record_csvs[league] = f"{league.lower()}_record.csv"
 
@@ -153,10 +151,8 @@ for league, cfg in leagues.items():
                 last_game_date = max(pd.to_datetime(hist_df['date'], errors='coerce'))
                 days_since_last_game = (datetime.now() - last_game_date).days
                 if days_since_last_game > 30:
-                    # backup
                     backup_path = cfg['csv'].replace('.csv','_backup.csv')
                     hist_df.to_csv(backup_path, index=False)
-                    # wipe CSV keeping headers
                     hist_df.iloc[0:0].to_csv(cfg['csv'], index=False)
                     print(f"{cfg['csv']} wiped (offseason), headers kept. Backup saved.")
         except Exception as e:
@@ -179,15 +175,17 @@ for league, cfg in leagues.items():
             home = g['home_team']
             away = g['away_team']
 
+            # --- H2H optional ---
+            pair = tuple(sorted([home, away]))
+            h2h_home = h2h_stats.get(pair, {'home_wins':0})['home_wins'] if pair in h2h_stats else 0
+            h2h_away = h2h_stats.get(pair, {'away_wins':0})['away_wins'] if pair in h2h_stats else 0
+
             home_form = sum(team_stats.get(home,{'form':[3]})['form'][-5:])
             away_form = sum(team_stats.get(away,{'form':[3]})['form'][-5:])
             home_avg_points = np.mean(team_stats.get(home,{'points_scored':[0]})['points_scored'][-15:])
             away_avg_points = np.mean(team_stats.get(away,{'points_scored':[0]})['points_scored'][-15:])
             home_allowed = np.mean(team_stats.get(home,{'points_allowed':[0]})['points_allowed'][-15:])
             away_allowed = np.mean(team_stats.get(away,{'points_allowed':[0]})['points_allowed'][-15:])
-            pair = tuple(sorted([home,away]))
-            h2h_home = h2h_stats.get(pair,{'home_wins':0})['home_wins']
-            h2h_away = h2h_stats.get(pair,{'away_wins':0})['away_wins']
             home_advantage = 1
             try:
                 last_game_home = team_stats.get(home, {'last_game': today})['last_game']
@@ -240,7 +238,7 @@ for league, cfg in leagues.items():
             # Update per-league record
             record_path = record_csvs[league]
             df_record = pd.read_csv(record_path)
-            actual_winner = home if pred==1 else away  # Ideally from outcome API
+            actual_winner = home if pred==1 else away
             result = 'Win' if pred==1 else 'Loss'
             df_record = pd.concat([df_record, pd.DataFrame([{
                 'date': today,
