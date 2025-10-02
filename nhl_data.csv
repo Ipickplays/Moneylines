@@ -1,1 +1,2 @@
-date,home_team,away_team,outcome,home_score,away_score
+date, matchup, predicted_winner, actual_winner, home_score, away_score
+
