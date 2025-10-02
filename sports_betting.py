@@ -25,6 +25,7 @@ for league in leagues:
 
 MAX_API_RETRIES = 3
 today = datetime.now().strftime('%Y-%m-%d')
+yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
 predictions = []
 
 # --- Helper: mode ---
@@ -119,7 +120,7 @@ def train_model(df, team_stats, h2h_stats):
         clf.fit(X, y)
     return clf
 
-# --- Fetch odds/outcomes ---
+# --- Fetch odds/outcomes from Odds API ---
 def fetch_odds(sport_key, target_day):
     for attempt in range(MAX_API_RETRIES):
         try:
@@ -135,7 +136,7 @@ def fetch_odds(sport_key, target_day):
 # --- Ensure record CSVs exist ---
 def init_record_csv(path):
     if not os.path.exists(path):
-        df = pd.DataFrame(columns=['date','matchup','predicted_winner','actual_winner','result'])
+        df = pd.DataFrame(columns=['date','matchup','predicted_winner','actual_winner','result','home_score','away_score'])
         df.to_csv(path, index=False)
 
 for path in record_csvs.values():
@@ -158,7 +159,43 @@ for league, cfg in leagues.items():
         except Exception as e:
             print(f"Error checking {cfg['csv']}: {e}")
 
-# --- Main loop ---
+# --- Function to update yesterday's predictions ---
+def update_yesterday_records():
+    for league, cfg in leagues.items():
+        record_path = record_csvs[league]
+        df_record = pd.read_csv(record_path)
+        updated = False
+        for idx, row in df_record.iterrows():
+            if row['date'] == yesterday and pd.isna(row['actual_winner']):
+                # Fetch actual scores from Odds API or other reliable API
+                games = fetch_odds(cfg['sport_key'], yesterday)
+                for g in games:
+                    if f"{g['away_team']} @ {g['home_team']}" == row['matchup']:
+                        # Get actual winner based on score
+                        home_score = g.get('home_score')
+                        away_score = g.get('away_score')
+                        if home_score is not None and away_score is not None:
+                            actual_winner = g['home_team'] if home_score>away_score else g['away_team']
+                            result = 'Win' if row['predicted_winner']==actual_winner else 'Loss'
+                            df_record.at[idx,'actual_winner'] = actual_winner
+                            df_record.at[idx,'result'] = result
+                            df_record.at[idx,'home_score'] = home_score
+                            df_record.at[idx,'away_score'] = away_score
+                            updated = True
+        if updated:
+            df_record.to_csv(record_path, index=False)
+            # Update all-time record
+            all_time_df = pd.read_csv(record_csvs['all_time'])
+            for idx, row in df_record.iterrows():
+                if row['date'] == yesterday:
+                    mask = (all_time_df['matchup'] == row['matchup']) & (all_time_df['date'] == yesterday)
+                    all_time_df.loc[mask, ['actual_winner','result','home_score','away_score']] = row[['actual_winner','result','home_score','away_score']]
+            all_time_df.to_csv(record_csvs['all_time'], index=False)
+
+# --- Update yesterday's records first ---
+update_yesterday_records()
+
+# --- Main loop for today ---
 for league, cfg in leagues.items():
     print(f"Processing {league}...")
     hist_df = fetch_historical_games(cfg['csv'])
@@ -238,14 +275,14 @@ for league, cfg in leagues.items():
             # Update per-league record
             record_path = record_csvs[league]
             df_record = pd.read_csv(record_path)
-            actual_winner = home if pred==1 else away
-            result = 'Win' if pred==1 else 'Loss'
             df_record = pd.concat([df_record, pd.DataFrame([{
                 'date': today,
                 'matchup': f"{away} @ {home}",
                 'predicted_winner': home if pred==1 else away,
-                'actual_winner': actual_winner,
-                'result': result
+                'actual_winner': None,
+                'result': None,
+                'home_score': None,
+                'away_score': None
             }])], ignore_index=True)
             df_record.to_csv(record_path, index=False)
 
@@ -255,8 +292,10 @@ for league, cfg in leagues.items():
                 'date': today,
                 'matchup': f"{away} @ {home}",
                 'predicted_winner': home if pred==1 else away,
-                'actual_winner': actual_winner,
-                'result': result
+                'actual_winner': None,
+                'result': None,
+                'home_score': None,
+                'away_score': None
             }])], ignore_index=True)
             all_time_df.to_csv(record_csvs['all_time'], index=False)
 
@@ -265,7 +304,7 @@ for league, cfg in leagues.items():
 
     if new_rows:
         hist_df = pd.concat([hist_df, pd.DataFrame(new_rows)], ignore_index=True)
-        hist_df.to_csv(cfg['csv'], index=False, encoding='utf-8')
+        hist_df.to_csv(cfg['csv'], index=False, encoding="utf-8")
 
 # --- Output HTML ---
 df_pred = pd.DataFrame(predictions)
@@ -304,5 +343,6 @@ os.system('git commit -m "Update predictions"')
 os.system("git push origin main")
 print("Pushed updated index.html to GitHub")
 os.system("shutdown /s /t 60 /f")
+
 
 
