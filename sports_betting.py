@@ -197,15 +197,15 @@ for league, cfg in leagues.items():
             except:
                 rest_days_home, rest_days_away = 0, 0
 
-            # --- Odds processing ---
+            # --- Odds processing (filter removed) ---
             home_prices, away_prices = [], []
             for bookmaker in g.get('bookmakers', []):
                 try:
                     outcomes = bookmaker.get('markets',[{}])[0].get('outcomes', [])
                     for o in outcomes:
-                        if o['name'] == home and -110 <= o.get('price',0) <= 130:
+                        if o['name'] == home:
                             home_prices.append(o.get('price'))
-                        elif o['name'] == away and -110 <= o.get('price',0) <= 130:
+                        elif o['name'] == away:
                             away_prices.append(o.get('price'))
                 except:
                     continue
