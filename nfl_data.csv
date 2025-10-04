@@ -1,4 +1,4 @@
-date, matchup, predicted_winner, actual_winner, home_score, away_score
+date,home_team,away_team,outcome,home_score,away_score
 2025-09-04,Philadelphia Eagles,Dallas Cowboys,1
 2025-09-05,Los Angeles Chargers,Kansas City Chiefs,1
 2025-09-07,Atlanta Falcons,Tampa Bay Buccaneers,0
