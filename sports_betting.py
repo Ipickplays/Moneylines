@@ -4,14 +4,13 @@ import requests
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from bs4 import BeautifulSoup
 from sklearn.ensemble import RandomForestClassifier
 import joblib
 from collections import Counter
 
 # === CONFIG ===
-ODDS_API_KEY = "6dcf1fafc93b0e7f96353ed3e29bd718"  # ← replace this with your real Odds API key
-WEATHER_API_KEY = "a7076980eeb88a2bb07b34b8bb6f7137"
+ODDS_API_KEY = "6dcf1fafc93b0e7f96353ed3e29bd718"  # Your Odds API key
+WEATHER_API_KEY = "a7076980eeb88a2bb07b34b8bb6f7137"  # OpenWeather key
 MODEL_DIR = 'models'
 DATA_FILES = {
     'NFL': 'nfl_data.csv',
@@ -19,7 +18,6 @@ DATA_FILES = {
     'NHL': 'nhl_data.csv',
     'MLB': 'mlb_data.csv'
 }
-
 MAX_API_RETRIES = 3
 today = datetime.now().strftime('%Y-%m-%d')
 
@@ -35,6 +33,7 @@ def most_common(lst):
     return counts.most_common(1)[0][0]
 
 def get_weather(city):
+    """Fetch weather internally (not displayed)."""
     try:
         url = f"http://api.weatherstack.com/current?access_key={WEATHER_API_KEY}&query={city}"
         res = requests.get(url)
@@ -154,7 +153,7 @@ def load_model(league):
         return joblib.load(path)
     return None
 
-# === MAIN LOOP ===
+# === MAIN SCRIPT ===
 ensure_dir(MODEL_DIR)
 predictions = []
 
@@ -162,13 +161,13 @@ for league, csv_file in DATA_FILES.items():
     print(f"\nProcessing {league}...")
     hist_df = fetch_historical_games(csv_file)
     team_stats, h2h_stats = build_team_stats(hist_df)
-
+    
     clf = load_model(league)
     if clf is None:
         clf = train_model(hist_df, team_stats, h2h_stats)
         save_model(clf, league)
-
-    # --- Fetch Odds API matchups ---
+    
+    # Odds and sport keys
     sport_keys = {
         'NFL':'americanfootball_nfl',
         'NBA':'basketball_nba',
@@ -179,11 +178,10 @@ for league, csv_file in DATA_FILES.items():
     if not games:
         print(f"No Odds API games found for {league} today.")
         continue
-
-    # --- Fetch ESPN injuries ---
+    
+    # ESPN injuries
     injuries = fetch_espn_injuries(league)
-
-    # --- Process each game ---
+    
     for g in games:
         try:
             home, away = g['home_team'], g['away_team']
@@ -224,11 +222,12 @@ for league, csv_file in DATA_FILES.items():
             if home_odds is None or away_odds is None:
                 continue
 
-            # Prediction
-            X_input = np.array([[home_form, away_form, home_avg, away_avg, home_allowed, away_allowed, h2h_home, h2h_away, home_adv, rest_home, rest_away]])
+            # Prediction & 60% threshold
+            X_input = np.array([[home_form, away_form, home_avg, away_avg, home_allowed, away_allowed,
+                                 h2h_home, h2h_away, home_adv, rest_home, rest_away]])
             pred = clf.predict(X_input)[0]
             conf_raw = clf.predict_proba(X_input)[0][pred] if hasattr(clf,"predict_proba") else 0.6
-            recommended = "Yes" if conf_raw >= 0.7 else "No"
+            recommended = "Yes" if conf_raw >= 0.6 else "No"
 
             injured_players = injuries.get(home,[]) + injuries.get(away,[])
 
@@ -242,8 +241,34 @@ for league, csv_file in DATA_FILES.items():
                 'injuries': injured_players
             })
 
+            # Update historical CSV automatically
+            new_row = {'date': today, 'home_team': home, 'away_team': away,
+                       'outcome': pred, 'home_score': None, 'away_score': None}
+            hist_df = pd.concat([hist_df, pd.DataFrame([new_row])], ignore_index=True)
+            hist_df.to_csv(csv_file, index=False, encoding='utf-8')
+
         except Exception as e:
             print(f"Error processing {g.get('home_team')} @ {g.get('away_team')}: {e}")
+
+# --- Update league_wl_record.csv automatically ---
+league_records = {}
+all_wins, all_losses = 0, 0
+for league, csv_file in DATA_FILES.items():
+    df = fetch_historical_games(csv_file)
+    if not df.empty:
+        home_wins = df['outcome'].sum()
+        total_games = len(df)
+        away_wins = total_games - home_wins
+        league_records[league] = f"{home_wins}-{away_wins}"
+        all_wins += home_wins
+        all_losses += away_wins
+    else:
+        league_records[league] = "0-0"
+league_records['ALL TIME RECORD'] = f"{all_wins}-{all_losses}"
+with open('league_wl_record.csv','w') as f:
+    for league, record in league_records.items():
+        f.write(f"{league}: {record}\n")
+print("Updated league_wl_record.csv")
 
 # --- Generate HTML ---
 df_pred = pd.DataFrame(predictions)
@@ -282,3 +307,4 @@ os.system('git commit -m "Update predictions"')
 os.system("git push origin main")
 print("Pushed updated index.html to GitHub")
 os.system("shutdown /s /t 60 /f")
+
