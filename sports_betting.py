@@ -72,6 +72,12 @@ def fetch_historical_games(path):
             df = pd.read_csv(path, encoding='utf-8', on_bad_lines='skip')
             df = df[df['home_team'].notna() & df['away_team'].notna()]
             df = df[pd.to_datetime(df['date'], errors='coerce').notna()]
+            # Convert numeric columns
+            numeric_cols = ['outcome', 'home_score', 'away_score']
+            for col in numeric_cols:
+                if col in df.columns:
+                    df[col] = pd.to_numeric(df[col], errors='coerce')
+            df = df.dropna(subset=numeric_cols)
             # Ensure all columns exist
             for col in ['date','home_team','away_team','outcome','home_score','away_score']:
                 if col not in df.columns:
@@ -211,7 +217,7 @@ for league, csv_file in DATA_FILES.items():
 
     for (home, away), score_data in scores_yesterday.items():
         hist_df = pd.concat([hist_df, pd.DataFrame([{
-            'date': yesterday_date,
+            'date': yesterday_date.strftime('%Y-%m-%d'),
             'home_team': home,
             'away_team': away,
             'outcome': score_data['outcome'],
