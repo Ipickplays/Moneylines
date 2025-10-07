@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 from sklearn.ensemble import RandomForestClassifier
 import joblib
 from collections import Counter
+from sklearn.exceptions import NotFittedError
+from sklearn.utils.validation import check_is_fitted
 
 # === CONFIG ===
 ODDS_API_KEY = "6dcf1fafc93b0e7f96353ed3e29bd718"
@@ -151,10 +153,11 @@ def train_model(df, team_stats, h2h_stats):
         home_adv = 1
         X.append([home_form, away_form, home_avg, away_avg, home_allowed, away_allowed, h2h_home, h2h_away, home_adv, rest_home, rest_away])
         y.append(row['outcome'])
-    clf = RandomForestClassifier(n_estimators=150, random_state=42)
     if X and y:
-        clf.fit(X,y)
-    return clf
+        clf = RandomForestClassifier(n_estimators=150, random_state=42)
+        clf.fit(X, y)
+        return clf
+    return None
 
 def save_model(clf, league):
     ensure_dir(MODEL_DIR)
@@ -164,7 +167,12 @@ def save_model(clf, league):
 def load_model(league):
     path = os.path.join(MODEL_DIR,f"{league.lower()}_model.pkl")
     if os.path.exists(path):
-        return joblib.load(path)
+        clf = joblib.load(path)
+        try:
+            check_is_fitted(clf)
+            return clf
+        except NotFittedError:
+            return None
     return None
 
 # === MAIN LOOP ===
@@ -179,7 +187,12 @@ for league, csv_file in DATA_FILES.items():
     clf = load_model(league)
     if clf is None:
         clf = train_model(hist_df, team_stats, h2h_stats)
-        save_model(clf, league)
+        if clf is not None:
+            save_model(clf, league)
+
+    if clf is None:
+        print(f"Insufficient data to train model for {league}. Skipping predictions.")
+        continue
 
     # Fetch Odds API matchups
     sport_keys = {
@@ -313,4 +326,3 @@ os.system('git commit -m "Update predictions"')
 os.system("git push origin main")
 print("Pushed updated index.html to GitHub")
 os.system("shutdown /s /t 60 /f")
-
