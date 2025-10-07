@@ -10,7 +10,6 @@ from collections import Counter
 
 # === CONFIG ===
 ODDS_API_KEY = "6dcf1fafc93b0e7f96353ed3e29bd718"
-WEATHER_API_KEY = "a7076980eeb88a2bb07b34b8bb6f7137"
 MODEL_DIR = 'models'
 DATA_FILES = {
     'NFL': 'nfl_data.csv',
@@ -18,7 +17,6 @@ DATA_FILES = {
     'NHL': 'nhl_data.csv',
     'MLB': 'mlb_data.csv'
 }
-LEAGUE_RECORD_FILE = 'league_wl_record.csv'
 MAX_API_RETRIES = 3
 today = datetime.now().strftime('%Y-%m-%d')
 today_date = datetime.now().date()
@@ -79,8 +77,31 @@ def fetch_historical_games(path):
             return df
         except:
             pass
-    # Create empty dataframe with correct columns if file missing
     return pd.DataFrame(columns=['date','home_team','away_team','outcome','home_score','away_score'])
+
+def fetch_scores_from_espn(league, game_date):
+    """Fetch completed games and scores from ESPN."""
+    urls = {
+        'NFL': f'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates={game_date.strftime("%Y%m%d")}',
+        'NBA': f'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates={game_date.strftime("%Y%m%d")}',
+        'NHL': f'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard?dates={game_date.strftime("%Y%m%d")}',
+        'MLB': f'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard?dates={game_date.strftime("%Y%m%d")}'
+    }
+    scores = {}
+    try:
+        r = requests.get(urls[league])
+        if r.status_code == 200:
+            data = r.json()
+            for evt in data.get('events', []):
+                home = evt['competitions'][0]['competitors'][0]['team']['displayName']
+                away = evt['competitions'][0]['competitors'][1]['team']['displayName']
+                home_score = int(evt['competitions'][0]['competitors'][0].get('score',0))
+                away_score = int(evt['competitions'][0]['competitors'][1].get('score',0))
+                outcome = 1 if home_score > away_score else 0
+                scores[(home, away)] = {'home_score': home_score, 'away_score': away_score, 'outcome': outcome}
+    except:
+        pass
+    return scores
 
 def build_team_stats(df):
     team_stats, h2h_stats = {}, {}
@@ -146,44 +167,6 @@ def load_model(league):
         return joblib.load(path)
     return None
 
-def update_league_record(hist_df, league):
-    # Compute wins/losses
-    records = {}
-    for team in pd.concat([hist_df['home_team'], hist_df['away_team']]).unique():
-        wins = len(hist_df[((hist_df['home_team']==team) & (hist_df['outcome']==1)) |
-                           ((hist_df['away_team']==team) & (hist_df['outcome']==0))])
-        losses = len(hist_df[((hist_df['home_team']==team) & (hist_df['outcome']==0)) |
-                             ((hist_df['away_team']==team) & (hist_df['outcome']==1))])
-        records[team] = {'wins': wins, 'losses': losses}
-
-    # Load CSV or create new
-    if os.path.exists(LEAGUE_RECORD_FILE):
-        df_rec = pd.read_csv(LEAGUE_RECORD_FILE)
-    else:
-        df_rec = pd.DataFrame(columns=['league','team','wins','losses'])
-
-    # Ensure columns exist
-    for col in ['league','team','wins','losses']:
-        if col not in df_rec.columns:
-            df_rec[col] = None
-
-    # Update or append records
-    for team, rec in records.items():
-        mask = (df_rec['league']==league) & (df_rec['team']==team)
-        if mask.any():
-            df_rec.loc[mask, 'wins'] = rec['wins']
-            df_rec.loc[mask, 'losses'] = rec['losses']
-        else:
-            df_rec = pd.concat([df_rec, pd.DataFrame([{
-                'league': league,
-                'team': team,
-                'wins': rec['wins'],
-                'losses': rec['losses']
-            }])], ignore_index=True)
-
-    # Save CSV
-    df_rec.to_csv(LEAGUE_RECORD_FILE, index=False)
-
 # === MAIN LOOP ===
 ensure_dir(MODEL_DIR)
 predictions = []
@@ -198,7 +181,7 @@ for league, csv_file in DATA_FILES.items():
         clf = train_model(hist_df, team_stats, h2h_stats)
         save_model(clf, league)
 
-    # --- Fetch Odds API matchups ---
+    # Fetch Odds API matchups
     sport_keys = {
         'NFL':'americanfootball_nfl',
         'NBA':'basketball_nba',
@@ -210,35 +193,27 @@ for league, csv_file in DATA_FILES.items():
         print(f"No Odds API games found for {league} today.")
         continue
 
-    # Filter to today
+    # Filter yesterday for updating historical CSV
+    scores_yesterday = fetch_scores_from_espn(league, yesterday_date)
+
+    for (home, away), score_data in scores_yesterday.items():
+        hist_df = pd.concat([hist_df, pd.DataFrame([{
+            'date': yesterday_date,
+            'home_team': home,
+            'away_team': away,
+            'outcome': score_data['outcome'],
+            'home_score': score_data['home_score'],
+            'away_score': score_data['away_score']
+        }])], ignore_index=True)
+    hist_df.to_csv(csv_file, index=False, encoding='utf-8')
+
+    # Filter games today
     games_today = [g for g in games if 'commence_time' in g and
                    datetime.fromisoformat(g['commence_time'][:-1]).date() == today_date]
 
-    # Filter yesterday for updating historical CSV
-    games_yesterday = [g for g in games if 'commence_time' in g and
-                       datetime.fromisoformat(g['commence_time'][:-1]).date() == yesterday_date]
-
-    # --- Update historical CSV with yesterday's outcomes ---
-    new_rows = []
-    for g in games_yesterday:
-        try:
-            home = g['home_team']
-            away = g['away_team']
-            outcome = 1  # Placeholder; implement actual score fetching
-            home_score, away_score = None, None
-            new_rows.append({'date': yesterday_date, 'home_team': home, 'away_team': away,
-                             'outcome': outcome, 'home_score': home_score, 'away_score': away_score})
-        except:
-            continue
-    if new_rows:
-        hist_df = pd.concat([hist_df, pd.DataFrame(new_rows)], ignore_index=True)
-        hist_df.to_csv(csv_file, index=False, encoding='utf-8')
-    update_league_record(hist_df, league)
-
-    # --- Fetch ESPN injuries ---
+    # Fetch ESPN injuries
     injuries = fetch_espn_injuries(league)
 
-    # --- Process each game for today ---
     for g in games_today:
         try:
             home, away = g['home_team'], g['away_team']
