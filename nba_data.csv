@@ -48,8 +48,14 @@ date,home_team,away_team,outcome,home_score,away_score,league
 2025-04-29,Los Angeles Clippers,Denver Nuggets,0,115,131,NBA
 2025-04-28,Cleveland Cavaliers,Miami Heat,1,138,83,NBA
 2025-04-28,Houston Rockets,Golden State Warriors,0,106,109,NBA
-2025-10-05,Charlotte Hornets,Oklahoma City Thunder,0,114,135,
-2025-10-05,Golden State Warriors,Los Angeles Lakers,1,111,103,
+2025-10-05,Charlotte Hornets,Oklahoma City Thunder,0,114,135,NBA
+2025-10-05,Golden State Warriors,Los Angeles Lakers,1,111,103,NBA
+2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,NBA
+2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,NBA
+2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,NBA
+2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,NBA
+2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,NBA
+2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,NBA
 2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,
 2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,
 2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,
