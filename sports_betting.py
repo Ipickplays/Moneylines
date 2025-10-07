@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.calibration import CalibratedClassifierCV
 import joblib
 from collections import Counter
 from sklearn.exceptions import NotFittedError
@@ -22,6 +23,7 @@ DATA_FILES = {
     'MLB': 'mlb_data.csv'
 }
 MAX_API_RETRIES = 3
+CONF_THRESHOLD = 0.65  # threshold for recommended bet
 
 # Set Central Time for IL
 central = pytz.timezone("America/Chicago")
@@ -164,7 +166,10 @@ def train_model(df, team_stats, h2h_stats):
     if X and y:
         clf = RandomForestClassifier(n_estimators=150, random_state=42)
         clf.fit(X, y)
-        return clf
+        # Calibrate probabilities
+        calibrated_clf = CalibratedClassifierCV(clf, method='isotonic', cv='prefit')
+        calibrated_clf.fit(X, y)
+        return calibrated_clf
     return None
 
 def save_model(clf, league):
@@ -216,7 +221,6 @@ for league, csv_file in DATA_FILES.items():
 
     # Filter yesterday for updating historical CSV
     scores_yesterday = fetch_scores_from_espn(league, yesterday_date)
-
     for (home, away), score_data in scores_yesterday.items():
         hist_df = pd.concat([hist_df, pd.DataFrame([{
             'date': yesterday_date.strftime('%Y-%m-%d'),
@@ -286,14 +290,15 @@ for league, csv_file in DATA_FILES.items():
                                  h2h_home, h2h_away, home_adv, rest_home, rest_away]])
             pred = clf.predict(X_input)[0]
             conf_raw = clf.predict_proba(X_input)[0][pred] if hasattr(clf,"predict_proba") else 0.6
-            recommended = "Yes" if conf_raw >= 0.6 else "No"
+            recommended = "Yes" if conf_raw >= CONF_THRESHOLD else "No"
+            confidence = round(conf_raw, 2)
 
             injured_players = injuries.get(home,[]) + injuries.get(away,[])
 
             predictions.append({
                 'matchup': f"{away} @ {home}",
                 'predicted_winner': home if pred==1 else away,
-                'confidence': recommended,
+                'confidence': confidence,
                 'recommended_bet': recommended,
                 'home_odds': home_odds,
                 'away_odds': away_odds,
