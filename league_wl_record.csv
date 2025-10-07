@@ -1,5 +1,82 @@
-NFL: 37-29
-NBA: 0-0
-NHL: 0-0
-MLB: 83-69
-ALL TIME RECORD: 120-98
+NFL: 0-0,league,team,wins,losses
+NBA: 0-0,,,,
+NHL: 0-0,,,,
+MLB: 0-0,,,,
+ALL TIME RECORD: 0-0,,,,
+,NFL,Philadelphia Eagles,3.0,0.0
+,NFL,Los Angeles Chargers,2.0,1.0
+,NFL,Atlanta Falcons,1.0,2.0
+,NFL,Cleveland Browns,2.0,2.0
+,NFL,Indianapolis Colts,2.0,1.0
+,NFL,Jacksonville Jaguars,3.0,1.0
+,NFL,New Orleans Saints,0.0,4.0
+,NFL,New England Patriots,2.0,2.0
+,NFL,New York Jets,0.0,4.0
+,NFL,Washington Commanders,2.0,3.0
+,NFL,Denver Broncos,1.0,1.0
+,NFL,Seattle Seahawks,1.0,2.0
+,NFL,Green Bay Packers,2.0,1.0
+,NFL,Cincinnati Bengals,3.0,1.0
+,NFL,Dallas Cowboys,2.0,1.0
+,NFL,Detroit Lions,2.0,2.0
+,NFL,Miami Dolphins,0.0,4.0
+,NFL,Tennessee Titans,0.0,5.0
+,NFL,Houston Texans,1.0,2.0
+,NFL,Pittsburgh Steelers,3.0,0.0
+,NFL,Los Angeles Rams,1.0,1.0
+,NFL,Las Vegas Raiders,2.0,1.0
+,NFL,Buffalo Bills,3.0,0.0
+,NFL,New York Giants,2.0,2.0
+,NFL,Baltimore Ravens,1.0,0.0
+,NFL,Carolina Panthers,2.0,2.0
+,NFL,Arizona Cardinals,2.0,1.0
+,NFL,Kansas City Chiefs,0.0,2.0
+,NFL,Tampa Bay Buccaneers,3.0,0.0
+,NFL,San Francisco 49ers,2.0,0.0
+,NFL,Chicago Bears,0.0,1.0
+,NFL,Minnesota Vikings,1.0,2.0
+,NBA,Milwaukee Bucks,1.0,1.0
+,NBA,Phoenix Suns,1.0,0.0
+,NBA,New York Knicks,7.0,7.0
+,NBA,Indiana Pacers,9.0,3.0
+,NBA,Minnesota Timberwolves,6.0,5.0
+,NBA,Oklahoma City Thunder,8.0,4.0
+,NBA,Denver Nuggets,5.0,5.0
+,NBA,Boston Celtics,3.0,4.0
+,NBA,Golden State Warriors,3.0,6.0
+,NBA,Cleveland Cavaliers,2.0,4.0
+,NBA,Los Angeles Clippers,1.0,2.0
+,NBA,Houston Rockets,2.0,2.0
+,NBA,Detroit Pistons,1.0,1.0
+,NBA,Orlando Magic,0.0,1.0
+,NBA,Miami Heat,0.0,2.0
+,NBA,Los Angeles Lakers,0.0,2.0
+,MLB,Chicago Cubs,2.0,6.0
+,MLB,Arizona Diamondbacks,0.0,2.0
+,MLB,Chicago White Sox,2.0,0.0
+,MLB,Cincinnati Reds,1.0,1.0
+,MLB,Houston Astros,2.0,0.0
+,MLB,Kansas City Royals,0.0,2.0
+,MLB,Los Angeles Dodgers,5.0,2.0
+,MLB,Miami Marlins,2.0,0.0
+,MLB,New York Yankees,3.0,2.0
+,MLB,Boston Red Sox,0.0,1.0
+,MLB,Texas Rangers,1.0,1.0
+,MLB,Colorado Rockies,0.0,1.0
+,MLB,Detroit Tigers,2.0,2.0
+,MLB,Minnesota Twins,1.0,0.0
+,MLB,New York Mets,1.0,1.0
+,MLB,Pittsburgh Pirates,1.0,1.0
+,MLB,St. Louis Cardinals,1.0,0.0
+,MLB,Tampa Bay Rays,1.0,0.0
+,MLB,Washington Nationals,1.0,0.0
+,MLB,Los Angeles Angels,0.0,2.0
+,MLB,Oakland Athletics,1.0,0.0
+,MLB,Atlanta Braves,0.0,1.0
+,MLB,San Diego Padres,2.0,1.0
+,MLB,Cleveland Guardians,2.0,1.0
+,MLB,Milwaukee Brewers,2.0,2.0
+,MLB,Toronto Blue Jays,2.0,2.0
+,MLB,Philadelphia Phillies,1.0,3.0
+,MLB,San Francisco Giants,1.0,1.0
+,MLB,Seattle Mariners,0.0,2.0

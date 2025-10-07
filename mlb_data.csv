@@ -1,158 +1,38 @@
-date,home_team,away_team,outcome,home_score,away_score
-2025-03-18,Chicago Cubs,Los Angeles Dodgers,0,,
-2025-03-19,Chicago Cubs,Los Angeles Dodgers,0,,
-2025-03-27,Arizona Diamondbacks,Chicago Cubs,0,,
-2025-03-27,Chicago White Sox,Los Angeles Angels,1,,
-2025-03-27,Cincinnati Reds,San Francisco Giants,0,,
-2025-03-27,Houston Astros,New York Mets,1,,
-2025-03-27,Kansas City Royals,Cleveland Guardians,0,,
-2025-03-27,Los Angeles Dodgers,Detroit Tigers,1,,
-2025-03-27,Miami Marlins,Pittsburgh Pirates,1,,
-2025-03-27,New York Yankees,Milwaukee Brewers,1,,
-2025-05-24,Boston Red Sox,Texas Rangers,0,,
-2025-05-24,Texas Rangers,Chicago White Sox,0,,
-2025-05-24,Cincinnati Reds,Chicago Cubs,1,,
-2025-05-24,Colorado Rockies,New York Yankees,0,,
-2025-05-24,Detroit Tigers,Cleveland Guardians,0,,
-2025-05-24,Houston Astros,Seattle Mariners,1,,
-2025-05-24,Minnesota Twins,Kansas City Royals,1,,
-2025-05-24,New York Mets,Los Angeles Dodgers,1,,
-2025-05-24,Pittsburgh Pirates,Milwaukee Brewers,1,,
-2025-05-24,St. Louis Cardinals,Arizona Diamondbacks,1,,
-2025-05-24,Tampa Bay Rays,Toronto Blue Jays,1,,
-2025-05-24,Washington Nationals,San Francisco Giants,1,,
-2025-05-25,Los Angeles Angels,Miami Marlins,0,,
-2025-05-25,Oakland Athletics,Philadelphia Phillies,1,,
-2025-05-25,Atlanta Braves,San Diego Padres,0,,
-2025-03-29,Arizona Diamondbacks,Chicago Cubs,1,,
-2025-03-29,Chicago White Sox,Los Angeles Angels,1,,
-2025-03-29,Cincinnati Reds,San Francisco Giants,1,,
-2025-03-29,Houston Astros,New York Mets,1,,
-2025-03-29,Kansas City Royals,Cleveland Guardians,1,,
-2025-03-29,Los Angeles Dodgers,Detroit Tigers,1,,
-2025-03-29,Miami Marlins,Pittsburgh Pirates,1,,
-2025-03-29,New York Yankees,Milwaukee Brewers,1,,
-2025-03-29,San Diego Padres,Atlanta Braves,1,,
-2025-03-29,Seattle Mariners,Oakland Athletics,0,,
-2025-03-29,St. Louis Cardinals,Minnesota Twins,1,,
-2025-03-29,Tampa Bay Rays,Colorado Rockies,0,,
-2025-03-29,Texas Rangers,Boston Red Sox,1,,
-2025-03-29,Toronto Blue Jays,Baltimore Orioles,0,,
-2025-03-29,Washington Nationals,Philadelphia Phillies,0,,
-2025-03-30,Arizona Diamondbacks,Chicago Cubs,1,,
-2025-03-30,Chicago White Sox,Los Angeles Angels,0,,
-2025-03-30,Cincinnati Reds,San Francisco Giants,0,,
-2025-03-30,Kansas City Royals,Cleveland Guardians,0,,
-2025-03-30,Miami Marlins,Pittsburgh Pirates,1,,
-2025-03-30,New York Yankees,Milwaukee Brewers,1,,
-2025-03-30,San Diego Padres,Atlanta Braves,1,,
-2025-03-30,Seattle Mariners,Oakland Athletics,1,,
-2025-03-30,St. Louis Cardinals,Minnesota Twins,1,,
-2025-03-30,Tampa Bay Rays,Colorado Rockies,1,,
-2025-03-30,Texas Rangers,Boston Red Sox,1,,
-2025-03-30,Toronto Blue Jays,Baltimore Orioles,1,,
-2025-03-30,Washington Nationals,Philadelphia Phillies,1,,
-2025-03-31,Oakland Athletics,Chicago Cubs,0,,
-2025-03-31,Baltimore Orioles,Boston Red Sox,1,,
-2025-03-31,Chicago White Sox,Minnesota Twins,1,,
-2025-03-31,Cincinnati Reds,Texas Rangers,1,,
-2025-03-31,Houston Astros,San Francisco Giants,0,,
-2025-03-31,Los Angeles Dodgers,Atlanta Braves,1,,
-2025-03-31,Miami Marlins,New York Mets,0,,
-2025-03-31,Milwaukee Brewers,Kansas City Royals,0,,
-2025-03-31,Philadelphia Phillies,Colorado Rockies,1,,
-2025-03-31,San Diego Padres,Cleveland Guardians,1,,
-2025-03-31,Seattle Mariners,Detroit Tigers,0,,
-2025-03-31,St. Louis Cardinals,Los Angeles Angels,0,,
-2025-03-31,Tampa Bay Rays,Pittsburgh Pirates,1,,
-2025-03-31,Toronto Blue Jays,Washington Nationals,1,,
-2025-04-01,Oakland Athletics,Chicago Cubs,0,,
-2025-04-01,Chicago White Sox,Minnesota Twins,1,,
-2025-04-01,Cincinnati Reds,Texas Rangers,0,,
-2025-04-01,Houston Astros,San Francisco Giants,1,,
-2025-04-01,Los Angeles Dodgers,Atlanta Braves,0,,
-2025-04-01,Miami Marlins,New York Mets,0,,
-2025-04-01,Milwaukee Brewers,Kansas City Royals,0,,
-2025-04-01,New York Yankees,Arizona Diamondbacks,1,,
-2025-04-01,San Diego Padres,Cleveland Guardians,0,,
-2025-04-01,Seattle Mariners,Detroit Tigers,1,,
-2025-04-01,St. Louis Cardinals,Los Angeles Angels,1,,
-2025-04-01,Tampa Bay Rays,Pittsburgh Pirates,0,,
-2025-04-01,Toronto Blue Jays,Washington Nationals,0,,
-2025-04-02,Oakland Athletics,Chicago Cubs,1,,
-2025-04-02,Baltimore Orioles,Boston Red Sox,1,,
-2025-04-02,Chicago White Sox,Minnesota Twins,1,,
-2025-04-02,Cincinnati Reds,Texas Rangers,1,,
-2025-04-02,Houston Astros,San Francisco Giants,1,,
-2025-04-02,Los Angeles Dodgers,Atlanta Braves,0,,
-2025-04-02,Miami Marlins,New York Mets,1,,
-2025-04-02,Milwaukee Brewers,Kansas City Royals,0,,
-2025-04-02,New York Yankees,Arizona Diamondbacks,1,,
-2025-04-02,Philadelphia Phillies,Colorado Rockies,0,,
-2025-04-02,San Diego Padres,Cleveland Guardians,0,,
-2025-04-02,Seattle Mariners,Detroit Tigers,0,,
-2025-04-02,St. Louis Cardinals,Los Angeles Angels,0,,
-2025-04-02,Tampa Bay Rays,Pittsburgh Pirates,1,,
-2025-04-02,Toronto Blue Jays,Washington Nationals,0,,
-2025-04-04,Cleveland Guardians,Los Angeles Angels,1,,
-2025-04-04,Miami Marlins,Atlanta Braves,0,,
-2025-04-04,St. Louis Cardinals,Boston Red Sox,0,,
-2025-04-04,San Diego Padres,Chicago Cubs,0,,
-2025-04-04,Oakland Athletics,Colorado Rockies,1,,
-2025-04-04,Chicago White Sox,Detroit Tigers,0,,
-2025-04-04,Baltimore Orioles,Kansas City Royals,0,,
-2025-04-04,Cincinnati Reds,Milwaukee Brewers,0,,
-2025-04-04,Toronto Blue Jays,New York Mets,0,,
-2025-04-04,Los Angeles Dodgers,Philadelphia Phillies,0,,
-2025-04-04,New York Yankees,Pittsburgh Pirates,1,,
-2025-04-04,Seattle Mariners,San Francisco Giants,0,,
-2025-04-04,Tampa Bay Rays,Texas Rangers,0,,
-2025-04-04,Arizona Diamondbacks,Washington Nationals,1,,
-2025-04-05,Cleveland Guardians,Los Angeles Angels,0,,
-2025-04-05,Miami Marlins,Atlanta Braves,1,,
-2025-04-05,San Diego Padres,Chicago Cubs,0,,
-2025-04-05,Oakland Athletics,Colorado Rockies,1,,
-2025-04-05,Chicago White Sox,Detroit Tigers,0,,
-2025-04-05,Baltimore Orioles,Kansas City Royals,1,,
-2025-04-05,Cincinnati Reds,Milwaukee Brewers,0,,
-2025-03-18,Chicago Cubs,Los Angeles Dodgers,0,,
-2025-03-19,Chicago Cubs,Los Angeles Dodgers,0,,
-2025-03-27,Arizona Diamondbacks,Chicago Cubs,0,,
-2025-03-27,Chicago White Sox,Los Angeles Angels,1,,
-2025-03-27,Cincinnati Reds,San Francisco Giants,0,,
-2025-03-27,Houston Astros,New York Mets,1,,
-2025-03-27,Kansas City Royals,Cleveland Guardians,0,,
-2025-03-27,Los Angeles Dodgers,Detroit Tigers,1,,
-2025-03-27,Miami Marlins,Pittsburgh Pirates,1,,
-2025-03-27,New York Yankees,Milwaukee Brewers,1,,
-2025-05-24,Boston Red Sox,Texas Rangers,0,,
-2025-05-24,Texas Rangers,Chicago White Sox,0,,
-2025-05-24,Cincinnati Reds,Chicago Cubs,1,,
-2025-05-24,Colorado Rockies,New York Yankees,0,,
-2025-05-24,Detroit Tigers,Cleveland Guardians,0,,
-2025-05-24,Houston Astros,Seattle Mariners,1,,
-2025-05-24,Minnesota Twins,Kansas City Royals,1,,
-2025-05-24,New York Mets,Los Angeles Dodgers,1,,
-2025-05-24,Pittsburgh Pirates,Milwaukee Brewers,1,,
-2025-05-24,St. Louis Cardinals,Arizona Diamondbacks,1,,
-2025-05-24,Tampa Bay Rays,Toronto Blue Jays,1,,
-2025-05-24,Washington Nationals,San Francisco Giants,1,,
-2025-05-25,Los Angeles Angels,Miami Marlins,0,,
-2025-05-25,Oakland Athletics,Philadelphia Phillies,1,,
-2025-05-25,Atlanta Braves,San Diego Padres,0,,
-2025-10-01,San Diego Padres,Chicago Cubs,0,,
-2025-10-02,Cleveland Guardians,Detroit Tigers,0,,
-2025-10-02,Chicago Cubs,San Diego Padres,0,,
-2025-10-04,Milwaukee Brewers,Chicago Cubs,1,,
-2025-10-04,Toronto Blue Jays,New York Yankees,1,,
-2025-10-04,Philadelphia Phillies,Los Angeles Dodgers,0,,
-2025-10-05,Toronto Blue Jays,New York Yankees,1,,
-2025-10-06,Philadelphia Phillies,Los Angeles Dodgers,0,,
-2025-10-06,Milwaukee Brewers,Chicago Cubs,1,,
-2025-10-06,Detroit Tigers,Seattle Mariners,1,,
-2025-10-06,New York Yankees,Toronto Blue Jays,1,,
-2025-10-06,Milwaukee Brewers,Chicago Cubs,1,,
-2025-10-06,Detroit Tigers,Seattle Mariners,1,,
-2025-10-06,New York Yankees,Toronto Blue Jays,1,,
-2025-10-06,Los Angeles Dodgers,Philadelphia Phillies,0,,
-2025-10-06,Los Angeles Dodgers,Philadelphia Phillies,0,,
+date,home_team,away_team,outcome,home_score,away_score,league
+2025-03-18,Chicago Cubs,Los Angeles Dodgers,0,, ,MLB
+2025-03-19,Chicago Cubs,Los Angeles Dodgers,0,, ,MLB
+2025-03-27,Arizona Diamondbacks,Chicago Cubs,0,, ,MLB
+2025-03-27,Chicago White Sox,Los Angeles Angels,1,, ,MLB
+2025-03-27,Cincinnati Reds,San Francisco Giants,0,, ,MLB
+2025-03-27,Houston Astros,New York Mets,1,, ,MLB
+2025-03-27,Kansas City Royals,Cleveland Guardians,0,, ,MLB
+2025-03-27,Los Angeles Dodgers,Detroit Tigers,1,, ,MLB
+2025-03-27,Miami Marlins,Pittsburgh Pirates,1,, ,MLB
+2025-03-27,New York Yankees,Milwaukee Brewers,1,, ,MLB
+2025-05-24,Boston Red Sox,Texas Rangers,0,, ,MLB
+2025-05-24,Texas Rangers,Chicago White Sox,0,, ,MLB
+2025-05-24,Cincinnati Reds,Chicago Cubs,1,, ,MLB
+2025-05-24,Colorado Rockies,New York Yankees,0,, ,MLB
+2025-05-24,Detroit Tigers,Cleveland Guardians,0,, ,MLB
+2025-05-24,Houston Astros,Seattle Mariners,1,, ,MLB
+2025-05-24,Minnesota Twins,Kansas City Royals,1,, ,MLB
+2025-05-24,New York Mets,Los Angeles Dodgers,1,, ,MLB
+2025-05-24,Pittsburgh Pirates,Milwaukee Brewers,1,, ,MLB
+2025-05-24,St. Louis Cardinals,Arizona Diamondbacks,1,, ,MLB
+2025-05-24,Tampa Bay Rays,Toronto Blue Jays,1,, ,MLB
+2025-05-24,Washington Nationals,San Francisco Giants,1,, ,MLB
+2025-05-25,Los Angeles Angels,Miami Marlins,0,, ,MLB
+2025-05-25,Oakland Athletics,Philadelphia Phillies,1,, ,MLB
+2025-05-25,Atlanta Braves,San Diego Padres,0,, ,MLB
+2025-10-01,San Diego Padres,Chicago Cubs,0,, ,MLB
+2025-10-02,Cleveland Guardians,Detroit Tigers,0,, ,MLB
+2025-10-02,Chicago Cubs,San Diego Padres,0,, ,MLB
+2025-10-04,Milwaukee Brewers,Chicago Cubs,1,, ,MLB
+2025-10-04,Toronto Blue Jays,New York Yankees,1,, ,MLB
+2025-10-04,Philadelphia Phillies,Los Angeles Dodgers,0,, ,MLB
+2025-10-05,Toronto Blue Jays,New York Yankees,1,, ,MLB
+2025-10-06,Philadelphia Phillies,Los Angeles Dodgers,0,, ,MLB
+2025-10-06,Milwaukee Brewers,Chicago Cubs,1,, ,MLB
+2025-10-06,Detroit Tigers,Seattle Mariners,1,, ,MLB
+2025-10-06,New York Yankees,Toronto Blue Jays,1,, ,MLB
+2025-10-06,Los Angeles Dodgers,Philadelphia Phillies,0,, ,MLB

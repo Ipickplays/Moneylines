@@ -18,7 +18,7 @@ DATA_FILES = {
     'NHL': 'nhl_data.csv',
     'MLB': 'mlb_data.csv'
 }
-
+LEAGUE_RECORD_FILE = 'league_wl_record.csv'
 MAX_API_RETRIES = 3
 today = datetime.now().strftime('%Y-%m-%d')
 today_date = datetime.now().date()
@@ -34,20 +34,6 @@ def most_common(lst):
         return None
     counts = Counter(lst)
     return counts.most_common(1)[0][0]
-
-def get_weather(city):
-    try:
-        url = f"http://api.weatherstack.com/current?access_key={WEATHER_API_KEY}&query={city}"
-        res = requests.get(url)
-        data = res.json()
-        if 'current' in data:
-            temp = data['current']['temperature']
-            wind = data['current']['wind_speed']
-            humidity = data['current']['humidity']
-            return temp, wind, humidity
-    except:
-        pass
-    return None, None, None
 
 def fetch_espn_injuries(league):
     urls = {
@@ -86,9 +72,14 @@ def fetch_historical_games(path):
             df = pd.read_csv(path, encoding='utf-8', on_bad_lines='skip')
             df = df[df['home_team'].notna() & df['away_team'].notna()]
             df = df[pd.to_datetime(df['date'], errors='coerce').notna()]
+            # Ensure all columns exist
+            for col in ['date','home_team','away_team','outcome','home_score','away_score']:
+                if col not in df.columns:
+                    df[col] = None
             return df
         except:
             pass
+    # Create empty dataframe with correct columns if file missing
     return pd.DataFrame(columns=['date','home_team','away_team','outcome','home_score','away_score'])
 
 def build_team_stats(df):
@@ -155,6 +146,44 @@ def load_model(league):
         return joblib.load(path)
     return None
 
+def update_league_record(hist_df, league):
+    # Compute wins/losses
+    records = {}
+    for team in pd.concat([hist_df['home_team'], hist_df['away_team']]).unique():
+        wins = len(hist_df[((hist_df['home_team']==team) & (hist_df['outcome']==1)) |
+                           ((hist_df['away_team']==team) & (hist_df['outcome']==0))])
+        losses = len(hist_df[((hist_df['home_team']==team) & (hist_df['outcome']==0)) |
+                             ((hist_df['away_team']==team) & (hist_df['outcome']==1))])
+        records[team] = {'wins': wins, 'losses': losses}
+
+    # Load CSV or create new
+    if os.path.exists(LEAGUE_RECORD_FILE):
+        df_rec = pd.read_csv(LEAGUE_RECORD_FILE)
+    else:
+        df_rec = pd.DataFrame(columns=['league','team','wins','losses'])
+
+    # Ensure columns exist
+    for col in ['league','team','wins','losses']:
+        if col not in df_rec.columns:
+            df_rec[col] = None
+
+    # Update or append records
+    for team, rec in records.items():
+        mask = (df_rec['league']==league) & (df_rec['team']==team)
+        if mask.any():
+            df_rec.loc[mask, 'wins'] = rec['wins']
+            df_rec.loc[mask, 'losses'] = rec['losses']
+        else:
+            df_rec = pd.concat([df_rec, pd.DataFrame([{
+                'league': league,
+                'team': team,
+                'wins': rec['wins'],
+                'losses': rec['losses']
+            }])], ignore_index=True)
+
+    # Save CSV
+    df_rec.to_csv(LEAGUE_RECORD_FILE, index=False)
+
 # === MAIN LOOP ===
 ensure_dir(MODEL_DIR)
 predictions = []
@@ -181,7 +210,7 @@ for league, csv_file in DATA_FILES.items():
         print(f"No Odds API games found for {league} today.")
         continue
 
-    # Filter to today for predictions
+    # Filter to today
     games_today = [g for g in games if 'commence_time' in g and
                    datetime.fromisoformat(g['commence_time'][:-1]).date() == today_date]
 
@@ -195,10 +224,8 @@ for league, csv_file in DATA_FILES.items():
         try:
             home = g['home_team']
             away = g['away_team']
-            # You would get real outcome and score here, using ESPN or another source
-            # For example purposes, we can leave placeholders
-            outcome = 1  # 1 = home win, 0 = away win
-            home_score, away_score = None, None  # Fill if API gives actual scores
+            outcome = 1  # Placeholder; implement actual score fetching
+            home_score, away_score = None, None
             new_rows.append({'date': yesterday_date, 'home_team': home, 'away_team': away,
                              'outcome': outcome, 'home_score': home_score, 'away_score': away_score})
         except:
@@ -206,6 +233,7 @@ for league, csv_file in DATA_FILES.items():
     if new_rows:
         hist_df = pd.concat([hist_df, pd.DataFrame(new_rows)], ignore_index=True)
         hist_df.to_csv(csv_file, index=False, encoding='utf-8')
+    update_league_record(hist_df, league)
 
     # --- Fetch ESPN injuries ---
     injuries = fetch_espn_injuries(league)
@@ -273,7 +301,7 @@ for league, csv_file in DATA_FILES.items():
         except Exception as e:
             print(f"Error processing {g.get('home_team')} @ {g.get('away_team')}: {e}")
 
-# --- Generate HTML ---
+# === Generate HTML ===
 df_pred = pd.DataFrame(predictions)
 if not df_pred.empty:
     df_pred = df_pred[['matchup','predicted_winner','confidence','recommended_bet','home_odds','away_odds','injuries']]
