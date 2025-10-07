@@ -9,6 +9,8 @@ import joblib
 from collections import Counter
 from sklearn.exceptions import NotFittedError
 from sklearn.utils.validation import check_is_fitted
+from dateutil import parser
+import pytz
 
 # === CONFIG ===
 ODDS_API_KEY = "6dcf1fafc93b0e7f96353ed3e29bd718"
@@ -20,9 +22,12 @@ DATA_FILES = {
     'MLB': 'mlb_data.csv'
 }
 MAX_API_RETRIES = 3
-today = datetime.now().strftime('%Y-%m-%d')
-today_date = datetime.now().date()
-yesterday_date = (datetime.now() - timedelta(days=1)).date()
+
+# Set Central Time for IL
+central = pytz.timezone("America/Chicago")
+today = datetime.now(central).strftime('%Y-%m-%d')
+today_date = datetime.now(central).date()
+yesterday_date = (datetime.now(central) - timedelta(days=1)).date()
 
 # === HELPER FUNCTIONS ===
 def ensure_dir(directory):
@@ -72,13 +77,11 @@ def fetch_historical_games(path):
             df = pd.read_csv(path, encoding='utf-8', on_bad_lines='skip')
             df = df[df['home_team'].notna() & df['away_team'].notna()]
             df = df[pd.to_datetime(df['date'], errors='coerce').notna()]
-            # Convert numeric columns
             numeric_cols = ['outcome', 'home_score', 'away_score']
             for col in numeric_cols:
                 if col in df.columns:
                     df[col] = pd.to_numeric(df[col], errors='coerce')
             df = df.dropna(subset=numeric_cols)
-            # Ensure all columns exist
             for col in ['date','home_team','away_team','outcome','home_score','away_score']:
                 if col not in df.columns:
                     df[col] = None
@@ -88,7 +91,6 @@ def fetch_historical_games(path):
     return pd.DataFrame(columns=['date','home_team','away_team','outcome','home_score','away_score'])
 
 def fetch_scores_from_espn(league, game_date):
-    """Fetch completed games and scores from ESPN."""
     urls = {
         'NFL': f'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates={game_date.strftime("%Y%m%d")}',
         'NBA': f'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates={game_date.strftime("%Y%m%d")}',
@@ -143,8 +145,8 @@ def train_model(df, team_stats, h2h_stats):
         try:
             last_home = team_stats.get(home, {'last_game': today})['last_game']
             last_away = team_stats.get(away, {'last_game': today})['last_game']
-            rest_home = (datetime.now() - datetime.strptime(last_home,"%Y-%m-%d")).days
-            rest_away = (datetime.now() - datetime.strptime(last_away,"%Y-%m-%d")).days
+            rest_home = (datetime.now(central) - datetime.strptime(last_home,"%Y-%m-%d")).days
+            rest_away = (datetime.now(central) - datetime.strptime(last_away,"%Y-%m-%d")).days
         except:
             rest_home, rest_away = 0,0
         home_form = sum(team_stats.get(home, {'form':[3]})['form'][-5:])
@@ -226,9 +228,17 @@ for league, csv_file in DATA_FILES.items():
         }])], ignore_index=True)
     hist_df.to_csv(csv_file, index=False, encoding='utf-8')
 
-    # Filter games today
-    games_today = [g for g in games if 'commence_time' in g and
-                   datetime.fromisoformat(g['commence_time'][:-1]).date() == today_date]
+    # Filter games today in Central Time
+    games_today = []
+    for g in games:
+        if 'commence_time' in g:
+            try:
+                game_dt_utc = parser.isoparse(g['commence_time'])
+                game_dt_local = game_dt_utc.astimezone(central)
+                if game_dt_local.date() == today_date:
+                    games_today.append(g)
+            except:
+                continue
 
     # Fetch ESPN injuries
     injuries = fetch_espn_injuries(league)
@@ -251,8 +261,8 @@ for league, csv_file in DATA_FILES.items():
             try:
                 last_home = team_stats.get(home, {'last_game': today})['last_game']
                 last_away = team_stats.get(away, {'last_game': today})['last_game']
-                rest_home = (datetime.now() - datetime.strptime(last_home,"%Y-%m-%d")).days
-                rest_away = (datetime.now() - datetime.strptime(last_away,"%Y-%m-%d")).days
+                rest_home = (datetime.now(central) - datetime.strptime(last_home,"%Y-%m-%d")).days
+                rest_away = (datetime.now(central) - datetime.strptime(last_away,"%Y-%m-%d")).days
             except:
                 rest_home, rest_away = 0,0
 
@@ -268,10 +278,8 @@ for league, csv_file in DATA_FILES.items():
                             away_prices.append(o.get('price'))
                 except:
                     continue
-            home_odds = most_common([p for p in home_prices if p is not None])
-            away_odds = most_common([p for p in away_prices if p is not None])
-            if home_odds is None or away_odds is None:
-                continue
+            home_odds = most_common([p for p in home_prices if p is not None]) or "N/A"
+            away_odds = most_common([p for p in away_prices if p is not None]) or "N/A"
 
             # Prediction
             X_input = np.array([[home_form, away_form, home_avg, away_avg, home_allowed, away_allowed,
