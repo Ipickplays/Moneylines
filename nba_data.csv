@@ -1,108 +1,111 @@
 date,home_team,away_team,home_score,away_score,outcome,home_odds,away_odds,injuries_home,injuries_away
-2025-10-06,Milwaukee Bucks,Miami Heat,1,103,93,NBA
-2025-10-03,Phoenix Suns,Los Angeles Lakers,1,103,81,NBA
-2025-05-31,New York Knicks,Indiana Pacers,0,108,125,NBA
-2025-05-29,Indiana Pacers,New York Knicks,0,94,111,NBA
-2025-05-28,Minnesota Timberwolves,Oklahoma City Thunder,0,94,124,NBA
-2025-05-27,New York Knicks,Indiana Pacers,0,121,130,NBA
-2025-05-26,Oklahoma City Thunder,Minnesota Timberwolves,1,128,126,NBA
-2025-05-25,New York Knicks,Indiana Pacers,1,106,100,NBA
-2025-05-24,Oklahoma City Thunder,Minnesota Timberwolves,0,101,143,NBA
-2025-05-23,Indiana Pacers,New York Knicks,1,114,109,NBA
-2025-05-22,Minnesota Timberwolves,Oklahoma City Thunder,0,103,118,NBA
-2025-05-21,Indiana Pacers,New York Knicks,1,138,135,NBA
-2025-05-20,Minnesota Timberwolves,Oklahoma City Thunder,0,88,114,NBA
-2025-05-18,Denver Nuggets,Oklahoma City Thunder,0,93,125,NBA
-2025-05-16,Boston Celtics,New York Knicks,0,81,119,NBA
-2025-05-15,Oklahoma City Thunder,Denver Nuggets,0,107,119,NBA
-2025-05-14,New York Knicks,Boston Celtics,0,102,127,NBA
-2025-05-14,Golden State Warriors,Minnesota Timberwolves,0,110,121,NBA
-2025-05-13,Indiana Pacers,Cleveland Cavaliers,1,114,105,NBA
-2025-05-13,Denver Nuggets,Oklahoma City Thunder,0,105,112,NBA
-2025-05-12,Boston Celtics,New York Knicks,0,113,121,NBA
-2025-05-12,Minnesota Timberwolves,Golden State Warriors,1,117,110,NBA
-2025-05-11,Oklahoma City Thunder,Denver Nuggets,1,92,87,NBA
-2025-05-11,Cleveland Cavaliers,Indiana Pacers,0,109,129,NBA
-2025-05-10,Boston Celtics,New York Knicks,1,115,93,NBA
-2025-05-10,Minnesota Timberwolves,Golden State Warriors,1,102,97,NBA
-2025-05-09,Cleveland Cavaliers,Indiana Pacers,1,126,104,NBA
-2025-05-09,Oklahoma City Thunder,Denver Nuggets,0,104,113,NBA
-2025-05-08,Golden State Warriors,Minnesota Timberwolves,0,93,117,NBA
-2025-05-07,New York Knicks,Boston Celtics,1,91,90,NBA
-2025-05-07,Denver Nuggets,Oklahoma City Thunder,0,106,149,NBA
-2025-05-06,Indiana Pacers,Cleveland Cavaliers,1,120,119,NBA
-2025-05-06,Golden State Warriors,Minnesota Timberwolves,1,99,88,NBA
-2025-05-05,New York Knicks,Boston Celtics,1,108,105,NBA
-2025-05-05,Denver Nuggets,Oklahoma City Thunder,1,121,119,NBA
-2025-05-04,Indiana Pacers,Cleveland Cavaliers,1,121,112,NBA
-2025-05-04,Golden State Warriors,Houston Rockets,1,103,89,NBA
-2025-05-03,Los Angeles Clippers,Denver Nuggets,0,101,120,NBA
-2025-05-02,Houston Rockets,Golden State Warriors,1,115,107,NBA
-2025-05-01,New York Knicks,Detroit Pistons,1,116,113,NBA
-2025-05-01,Denver Nuggets,Los Angeles Clippers,0,105,111,NBA
-2025-04-30,Golden State Warriors,Houston Rockets,0,116,131,NBA
-2025-04-30,Minnesota Timberwolves,Los Angeles Lakers,1,103,96,NBA
-2025-04-29,Milwaukee Bucks,Indiana Pacers,0,118,119,NBA
-2025-04-29,Detroit Pistons,New York Knicks,1,106,103,NBA
-2025-04-29,Orlando Magic,Boston Celtics,0,89,120,NBA
-2025-04-29,Los Angeles Clippers,Denver Nuggets,0,115,131,NBA
-2025-04-28,Cleveland Cavaliers,Miami Heat,1,138,83,NBA
-2025-04-28,Houston Rockets,Golden State Warriors,0,106,109,NBA
-2025-10-05,Charlotte Hornets,Oklahoma City Thunder,0,114,135,NBA
-2025-10-05,Golden State Warriors,Los Angeles Lakers,1,111,103,NBA
-2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,NBA
-2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,NBA
-2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,NBA
-2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,NBA
-2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,NBA
-2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,NBA
-2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,
-2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,
-2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,
-2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,
-2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,
-2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,
-2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,
-2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,
-2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,
-2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,
-2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,
-2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,
-2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,
-2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,
-2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,
-2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,
-2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,
-2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,
-2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,
-2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,
-2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,
-2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,
-2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,
-2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,
-2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,
-2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,
-2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,
-2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,
-2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,
-2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,
-2025-10-07,Cleveland Cavaliers,Chicago Bulls,0,117,118,
-2025-10-07,Minnesota Timberwolves,Indiana Pacers,0,134,135,
-2025-10-08,Miami Heat,San Antonio Spurs,0,107,112,
-2025-10-08,Houston Rockets,Utah Jazz,1,140,127,
-2025-10-08,Memphis Grizzlies,Boston Celtics,0,103,121,
-2025-10-08,Golden State Warriors,Portland Trail Blazers,1,129,123,
-2025-10-08,Sacramento Kings,Toronto Raptors,0,122,130,
-2025-10-09,New York Knicks,Minnesota Timberwolves,1,100,95,
-2025-10-09,Chicago Bulls,Cleveland Cavaliers,1,119,112,
-2025-10-09,Milwaukee Bucks,Detroit Pistons,1,117,111,
-2025-10-09,Oklahoma City Thunder,Charlotte Hornets,1,122,116,
-2025-10-09,LA Clippers,Guangzhou Loong-Lions,1,142,95,
-2025-10-10,Brooklyn Nets,Phoenix Suns,0,127,132,
-2025-10-10,Toronto Raptors,Boston Celtics,1,107,105,
-2025-10-10,Philadelphia 76ers,Orlando Magic,0,98,128,
-2025-10-10,San Antonio Spurs,Utah Jazz,1,134,130,
-2025-10-10,Portland Trail Blazers,Sacramento Kings,1,124,123,
-2025-10-11,Indiana Pacers,Oklahoma City Thunder,1,116,101,
-2025-10-11,Memphis Grizzlies,Atlanta Hawks,0,116,122,
-2025-10-11,Dallas Mavericks,Charlotte Hornets,0,116,120,
+2025-10-06,Milwaukee Bucks,Miami Heat,1,103,93,NBA,,,
+2025-10-03,Phoenix Suns,Los Angeles Lakers,1,103,81,NBA,,,
+2025-05-31,New York Knicks,Indiana Pacers,0,108,125,NBA,,,
+2025-05-29,Indiana Pacers,New York Knicks,0,94,111,NBA,,,
+2025-05-28,Minnesota Timberwolves,Oklahoma City Thunder,0,94,124,NBA,,,
+2025-05-27,New York Knicks,Indiana Pacers,0,121,130,NBA,,,
+2025-05-26,Oklahoma City Thunder,Minnesota Timberwolves,1,128,126,NBA,,,
+2025-05-25,New York Knicks,Indiana Pacers,1,106,100,NBA,,,
+2025-05-24,Oklahoma City Thunder,Minnesota Timberwolves,0,101,143,NBA,,,
+2025-05-23,Indiana Pacers,New York Knicks,1,114,109,NBA,,,
+2025-05-22,Minnesota Timberwolves,Oklahoma City Thunder,0,103,118,NBA,,,
+2025-05-21,Indiana Pacers,New York Knicks,1,138,135,NBA,,,
+2025-05-20,Minnesota Timberwolves,Oklahoma City Thunder,0,88,114,NBA,,,
+2025-05-18,Denver Nuggets,Oklahoma City Thunder,0,93,125,NBA,,,
+2025-05-16,Boston Celtics,New York Knicks,0,81,119,NBA,,,
+2025-05-15,Oklahoma City Thunder,Denver Nuggets,0,107,119,NBA,,,
+2025-05-14,New York Knicks,Boston Celtics,0,102,127,NBA,,,
+2025-05-14,Golden State Warriors,Minnesota Timberwolves,0,110,121,NBA,,,
+2025-05-13,Indiana Pacers,Cleveland Cavaliers,1,114,105,NBA,,,
+2025-05-13,Denver Nuggets,Oklahoma City Thunder,0,105,112,NBA,,,
+2025-05-12,Boston Celtics,New York Knicks,0,113,121,NBA,,,
+2025-05-12,Minnesota Timberwolves,Golden State Warriors,1,117,110,NBA,,,
+2025-05-11,Oklahoma City Thunder,Denver Nuggets,1,92,87,NBA,,,
+2025-05-11,Cleveland Cavaliers,Indiana Pacers,0,109,129,NBA,,,
+2025-05-10,Boston Celtics,New York Knicks,1,115,93,NBA,,,
+2025-05-10,Minnesota Timberwolves,Golden State Warriors,1,102,97,NBA,,,
+2025-05-09,Cleveland Cavaliers,Indiana Pacers,1,126,104,NBA,,,
+2025-05-09,Oklahoma City Thunder,Denver Nuggets,0,104,113,NBA,,,
+2025-05-08,Golden State Warriors,Minnesota Timberwolves,0,93,117,NBA,,,
+2025-05-07,New York Knicks,Boston Celtics,1,91,90,NBA,,,
+2025-05-07,Denver Nuggets,Oklahoma City Thunder,0,106,149,NBA,,,
+2025-05-06,Indiana Pacers,Cleveland Cavaliers,1,120,119,NBA,,,
+2025-05-06,Golden State Warriors,Minnesota Timberwolves,1,99,88,NBA,,,
+2025-05-05,New York Knicks,Boston Celtics,1,108,105,NBA,,,
+2025-05-05,Denver Nuggets,Oklahoma City Thunder,1,121,119,NBA,,,
+2025-05-04,Indiana Pacers,Cleveland Cavaliers,1,121,112,NBA,,,
+2025-05-04,Golden State Warriors,Houston Rockets,1,103,89,NBA,,,
+2025-05-03,Los Angeles Clippers,Denver Nuggets,0,101,120,NBA,,,
+2025-05-02,Houston Rockets,Golden State Warriors,1,115,107,NBA,,,
+2025-05-01,New York Knicks,Detroit Pistons,1,116,113,NBA,,,
+2025-05-01,Denver Nuggets,Los Angeles Clippers,0,105,111,NBA,,,
+2025-04-30,Golden State Warriors,Houston Rockets,0,116,131,NBA,,,
+2025-04-30,Minnesota Timberwolves,Los Angeles Lakers,1,103,96,NBA,,,
+2025-04-29,Milwaukee Bucks,Indiana Pacers,0,118,119,NBA,,,
+2025-04-29,Detroit Pistons,New York Knicks,1,106,103,NBA,,,
+2025-04-29,Orlando Magic,Boston Celtics,0,89,120,NBA,,,
+2025-04-29,Los Angeles Clippers,Denver Nuggets,0,115,131,NBA,,,
+2025-04-28,Cleveland Cavaliers,Miami Heat,1,138,83,NBA,,,
+2025-04-28,Houston Rockets,Golden State Warriors,0,106,109,NBA,,,
+2025-10-05,Charlotte Hornets,Oklahoma City Thunder,0,114,135,NBA,,,
+2025-10-05,Golden State Warriors,Los Angeles Lakers,1,111,103,NBA,,,
+2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,NBA,,,
+2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,NBA,,,
+2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,NBA,,,
+2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,NBA,,,
+2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,NBA,,,
+2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,NBA,,,
+2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,,,,
+2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,,,,
+2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,,,,
+2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,,,,
+2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,,,,
+2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,,,,
+2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,,,,
+2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,,,,
+2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,,,,
+2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,,,,
+2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,,,,
+2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,,,,
+2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,,,,
+2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,,,,
+2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,,,,
+2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,,,,
+2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,,,,
+2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,,,,
+2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,,,,
+2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,,,,
+2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,,,,
+2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,,,,
+2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,,,,
+2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,,,,
+2025-10-06,Miami Heat,Milwaukee Bucks,0,93,103,,,,
+2025-10-06,Houston Rockets,Atlanta Hawks,1,122,113,,,,
+2025-10-06,Memphis Grizzlies,Detroit Pistons,0,112,128,,,,
+2025-10-06,San Antonio Spurs,Guangzhou Loong-Lions,1,119,88,,,,
+2025-10-06,Dallas Mavericks,Oklahoma City Thunder,1,106,89,,,,
+2025-10-06,Toronto Raptors,Denver Nuggets,0,108,112,,,,
+2025-10-07,Cleveland Cavaliers,Chicago Bulls,0,117,118,,,,
+2025-10-07,Minnesota Timberwolves,Indiana Pacers,0,134,135,,,,
+2025-10-08,Miami Heat,San Antonio Spurs,0,107,112,,,,
+2025-10-08,Houston Rockets,Utah Jazz,1,140,127,,,,
+2025-10-08,Memphis Grizzlies,Boston Celtics,0,103,121,,,,
+2025-10-08,Golden State Warriors,Portland Trail Blazers,1,129,123,,,,
+2025-10-08,Sacramento Kings,Toronto Raptors,0,122,130,,,,
+2025-10-09,New York Knicks,Minnesota Timberwolves,1,100,95,,,,
+2025-10-09,Chicago Bulls,Cleveland Cavaliers,1,119,112,,,,
+2025-10-09,Milwaukee Bucks,Detroit Pistons,1,117,111,,,,
+2025-10-09,Oklahoma City Thunder,Charlotte Hornets,1,122,116,,,,
+2025-10-09,LA Clippers,Guangzhou Loong-Lions,1,142,95,,,,
+2025-10-10,Brooklyn Nets,Phoenix Suns,0,127,132,,,,
+2025-10-10,Toronto Raptors,Boston Celtics,1,107,105,,,,
+2025-10-10,Philadelphia 76ers,Orlando Magic,0,98,128,,,,
+2025-10-10,San Antonio Spurs,Utah Jazz,1,134,130,,,,
+2025-10-10,Portland Trail Blazers,Sacramento Kings,1,124,123,,,,
+2025-10-11,Indiana Pacers,Oklahoma City Thunder,1,116,101,,,,
+2025-10-11,Memphis Grizzlies,Atlanta Hawks,0,116,122,,,,
+2025-10-11,Dallas Mavericks,Charlotte Hornets,0,116,120,,,,
+2025-10-11,Indiana Pacers,Oklahoma City Thunder,116,101,1,,,,
+2025-10-11,Memphis Grizzlies,Atlanta Hawks,116,122,0,,,,
+2025-10-11,Dallas Mavericks,Charlotte Hornets,116,120,0,,,,
