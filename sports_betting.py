@@ -12,9 +12,14 @@ from sklearn.exceptions import NotFittedError
 from sklearn.utils.validation import check_is_fitted
 from dateutil import parser
 import pytz
+from dotenv import load_dotenv  # NEW
+
+# === LOAD CONFIG (.env) ===
+load_dotenv()
+ODDS_API_KEY = os.getenv("ODDS_API_KEY")
+CONF_THRESHOLD = float(os.getenv("CONF_THRESHOLD", 0.65))
 
 # === CONFIG ===
-ODDS_API_KEY = "6dcf1fafc93b0e7f96353ed3e29bd718"
 MODEL_DIR = 'models'
 DATA_FILES = {
     'NFL': 'nfl_data.csv',
@@ -23,7 +28,6 @@ DATA_FILES = {
     'MLB': 'mlb_data.csv'
 }
 MAX_API_RETRIES = 3
-CONF_THRESHOLD = 0.65  # threshold for recommended bet
 
 # Set Central Time for IL
 central = pytz.timezone("America/Chicago")
@@ -73,24 +77,21 @@ def fetch_odds(sport_key):
             time.sleep(1)
     return []
 
+# === UPDATED HISTORICAL GAME FETCH ===
 def fetch_historical_games(path):
+    cols = ['date','home_team','away_team','home_score','away_score','outcome',
+            'home_odds','away_odds','injuries_home','injuries_away']
     if os.path.exists(path):
-        try:
-            df = pd.read_csv(path, encoding='utf-8', on_bad_lines='skip')
-            df = df[df['home_team'].notna() & df['away_team'].notna()]
-            df = df[pd.to_datetime(df['date'], errors='coerce').notna()]
-            numeric_cols = ['outcome', 'home_score', 'away_score']
-            for col in numeric_cols:
-                if col in df.columns:
-                    df[col] = pd.to_numeric(df[col], errors='coerce')
-            df = df.dropna(subset=numeric_cols)
-            for col in ['date','home_team','away_team','outcome','home_score','away_score']:
-                if col not in df.columns:
-                    df[col] = None
-            return df
-        except:
-            pass
-    return pd.DataFrame(columns=['date','home_team','away_team','outcome','home_score','away_score'])
+        df = pd.read_csv(path, on_bad_lines='skip')
+        for c in cols:
+            if c not in df.columns:
+                df[c] = np.nan
+        df.dropna(subset=['home_team','away_team','date'], inplace=True)
+        df.drop_duplicates(subset=['date','home_team','away_team'], inplace=True)
+        df['date'] = pd.to_datetime(df['date'], errors='coerce').dt.strftime('%Y-%m-%d')
+        df.fillna(0, inplace=True)
+        return df[cols]
+    return pd.DataFrame(columns=cols)
 
 def fetch_scores_from_espn(league, game_date):
     urls = {
@@ -140,42 +141,66 @@ def build_team_stats(df):
             h2h_stats[pair]['away_wins'] +=1
     return team_stats, h2h_stats
 
+# === UPDATED TRAIN MODEL ===
 def train_model(df, team_stats, h2h_stats):
     X, y = [], []
     for row in df.to_dict('records'):
         home, away = row['home_team'], row['away_team']
-        try:
-            last_home = team_stats.get(home, {'last_game': today})['last_game']
-            last_away = team_stats.get(away, {'last_game': today})['last_game']
-            rest_home = (datetime.now(central) - datetime.strptime(last_home,"%Y-%m-%d")).days
-            rest_away = (datetime.now(central) - datetime.strptime(last_away,"%Y-%m-%d")).days
-        except:
-            rest_home, rest_away = 0,0
+        pair = tuple(sorted([home, away]))
+
         home_form = sum(team_stats.get(home, {'form':[3]})['form'][-5:])
         away_form = sum(team_stats.get(away, {'form':[3]})['form'][-5:])
         home_avg = np.mean(team_stats.get(home, {'points_scored':[0]})['points_scored'][-15:])
         away_avg = np.mean(team_stats.get(away, {'points_scored':[0]})['points_scored'][-15:])
-        home_allowed = np.mean(team_stats.get(home, {'points_allowed':[0]})['points_allowed'][-15:])
-        away_allowed = np.mean(team_stats.get(away, {'points_allowed':[0]})['points_allowed'][-15:])
-        pair = tuple(sorted([home, away]))
-        h2h_home = h2h_stats.get(pair,{'home_wins':0})['home_wins']
-        h2h_away = h2h_stats.get(pair,{'away_wins':0})['away_wins']
-        home_adv = 1
-        X.append([home_form, away_form, home_avg, away_avg, home_allowed, away_allowed, h2h_home, h2h_away, home_adv, rest_home, rest_away])
-        y.append(row['outcome'])
-    if X and y:
-        clf = RandomForestClassifier(n_estimators=150, random_state=42)
-        clf.fit(X, y)
-        # Calibrate probabilities
-        calibrated_clf = CalibratedClassifierCV(clf, method='isotonic', cv='prefit')
-        calibrated_clf.fit(X, y)
-        return calibrated_clf
-    return None
+        home_diff = np.mean(np.array(team_stats.get(home, {'points_scored':[0]})['points_scored'][-10:]) -
+                            np.array(team_stats.get(home, {'points_allowed':[0]})['points_allowed'][-10:]))
+        away_diff = np.mean(np.array(team_stats.get(away, {'points_scored':[0]})['points_scored'][-10:]) -
+                            np.array(team_stats.get(away, {'points_allowed':[0]})['points_allowed'][-10:]))
+        h2h_home = h2h_stats.get(pair, {'home_wins':0})['home_wins']
+        h2h_away = h2h_stats.get(pair, {'away_wins':0})['away_wins']
+        rest_home, rest_away = 0, 0
+        home_odds = row.get('home_odds', 0)
+        away_odds = row.get('away_odds', 0)
+        injuries_home = row.get('injuries_home', 0)
+        injuries_away = row.get('injuries_away', 0)
 
-def save_model(clf, league):
+        def american_to_prob(o):
+            if o > 0:
+                return 100 / (o + 100)
+            elif o < 0:
+                return abs(o) / (abs(o) + 100)
+            return 0.5
+
+        home_prob = american_to_prob(home_odds)
+        away_prob = american_to_prob(away_odds)
+
+        X.append([
+            home_form, away_form, home_avg, away_avg,
+            home_diff, away_diff, h2h_home, h2h_away,
+            rest_home, rest_away, injuries_home, injuries_away,
+            home_prob, away_prob
+        ])
+        y.append(row['outcome'])
+
+    if X and y:
+        clf = RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42)
+        clf.fit(X, y)
+        acc = clf.score(X, y)
+        print(f"Training accuracy: {acc:.3f}")
+        calibrated = CalibratedClassifierCV(clf, method='isotonic', cv='prefit')
+        calibrated.fit(X, y)
+        return calibrated, acc
+    return None, 0
+
+# === UPDATED SAVE MODEL ===
+def save_model(clf, league, accuracy):
     ensure_dir(MODEL_DIR)
-    path = os.path.join(MODEL_DIR,f"{league.lower()}_model.pkl")
-    joblib.dump(clf,path)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    model_path = os.path.join(MODEL_DIR, f"{league.lower()}_model_{timestamp}.pkl")
+    meta_path = os.path.join(MODEL_DIR, f"{league.lower()}_meta_{timestamp}.txt")
+    joblib.dump(clf, model_path)
+    with open(meta_path, "w") as f:
+        f.write(f"Accuracy: {accuracy:.3f}\nTrained: {timestamp}\n")
 
 def load_model(league):
     path = os.path.join(MODEL_DIR,f"{league.lower()}_model.pkl")
@@ -199,15 +224,14 @@ for league, csv_file in DATA_FILES.items():
 
     clf = load_model(league)
     if clf is None:
-        clf = train_model(hist_df, team_stats, h2h_stats)
+        clf, acc = train_model(hist_df, team_stats, h2h_stats)
         if clf is not None:
-            save_model(clf, league)
+            save_model(clf, league, acc)
 
     if clf is None:
         print(f"Insufficient data to train model for {league}. Skipping predictions.")
         continue
 
-    # Fetch Odds API matchups
     sport_keys = {
         'NFL':'americanfootball_nfl',
         'NBA':'basketball_nba',
@@ -219,7 +243,6 @@ for league, csv_file in DATA_FILES.items():
         print(f"No Odds API games found for {league} today.")
         continue
 
-    # Filter yesterday for updating historical CSV
     scores_yesterday = fetch_scores_from_espn(league, yesterday_date)
     for (home, away), score_data in scores_yesterday.items():
         hist_df = pd.concat([hist_df, pd.DataFrame([{
@@ -228,11 +251,14 @@ for league, csv_file in DATA_FILES.items():
             'away_team': away,
             'outcome': score_data['outcome'],
             'home_score': score_data['home_score'],
-            'away_score': score_data['away_score']
+            'away_score': score_data['away_score'],
+            'home_odds': 0,
+            'away_odds': 0,
+            'injuries_home': 0,
+            'injuries_away': 0
         }])], ignore_index=True)
     hist_df.to_csv(csv_file, index=False, encoding='utf-8')
 
-    # Filter games today in Central Time
     games_today = []
     for g in games:
         if 'commence_time' in g:
@@ -244,7 +270,6 @@ for league, csv_file in DATA_FILES.items():
             except:
                 continue
 
-    # Fetch ESPN injuries
     injuries = fetch_espn_injuries(league)
 
     for g in games_today:
@@ -262,15 +287,8 @@ for league, csv_file in DATA_FILES.items():
             away_allowed = np.mean(team_stats.get(away,{'points_allowed':[0]})['points_allowed'][-15:])
             home_adv = 1
 
-            try:
-                last_home = team_stats.get(home, {'last_game': today})['last_game']
-                last_away = team_stats.get(away, {'last_game': today})['last_game']
-                rest_home = (datetime.now(central) - datetime.strptime(last_home,"%Y-%m-%d")).days
-                rest_away = (datetime.now(central) - datetime.strptime(last_away,"%Y-%m-%d")).days
-            except:
-                rest_home, rest_away = 0,0
+            rest_home, rest_away = 0,0
 
-            # Odds
             home_prices, away_prices = [], []
             for bookmaker in g.get('bookmakers',[]):
                 try:
@@ -285,14 +303,13 @@ for league, csv_file in DATA_FILES.items():
             home_odds = most_common([p for p in home_prices if p is not None]) or "N/A"
             away_odds = most_common([p for p in away_prices if p is not None]) or "N/A"
 
-            # Prediction
-            X_input = np.array([[home_form, away_form, home_avg, away_avg, home_allowed, away_allowed,
-                                 h2h_home, h2h_away, home_adv, rest_home, rest_away]])
+            X_input = np.array([[home_form, away_form, home_avg, away_avg,
+                                 home_allowed, away_allowed, h2h_home, h2h_away,
+                                 home_adv, rest_home, rest_away, 0, 0, 0, 0]])
             pred = clf.predict(X_input)[0]
             conf_raw = clf.predict_proba(X_input)[0][pred] if hasattr(clf,"predict_proba") else 0.6
             recommended = "Yes" if conf_raw >= CONF_THRESHOLD else "No"
             confidence = round(conf_raw, 2)
-
             injured_players = injuries.get(home,[]) + injuries.get(away,[])
 
             predictions.append({
@@ -308,7 +325,7 @@ for league, csv_file in DATA_FILES.items():
         except Exception as e:
             print(f"Error processing {g.get('home_team')} @ {g.get('away_team')}: {e}")
 
-# === Generate HTML ===
+# === HTML OUTPUT ===
 df_pred = pd.DataFrame(predictions)
 if not df_pred.empty:
     df_pred = df_pred[['matchup','predicted_winner','confidence','recommended_bet','home_odds','away_odds','injuries']]

@@ -1,4 +1,4 @@
-date,home_team,away_team,outcome,home_score,away_score,league
+date,home_team,away_team,home_score,away_score,outcome,home_odds,away_odds,injuries_home,injuries_away
 2025-10-05,Cleveland Browns,Minnesota Vikings,0,17.0,21.0,
 2025-10-05,Indianapolis Colts,Las Vegas Raiders,1,40.0,6.0,
 2025-10-05,New Orleans Saints,New York Giants,1,26.0,14.0,

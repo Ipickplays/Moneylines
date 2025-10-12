@@ -1,4 +1,4 @@
-date,home_team,away_team,outcome,home_score,away_score,league
+date,home_team,away_team,home_score,away_score,outcome,home_odds,away_odds,injuries_home,injuries_away
 2025-10-06,Milwaukee Bucks,Miami Heat,1,103,93,NBA
 2025-10-03,Phoenix Suns,Los Angeles Lakers,1,103,81,NBA
 2025-05-31,New York Knicks,Indiana Pacers,0,108,125,NBA
