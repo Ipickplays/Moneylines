@@ -293,7 +293,15 @@ for league, csv_file in DATA_FILES.items():
             recommended = "Yes" if conf_raw >= CONF_THRESHOLD else "No"
             confidence = round(conf_raw, 2)
 
+            # Adjust prediction based on injuries
+            home_injuries = len(injuries.get(home, []))
+            away_injuries = len(injuries.get(away, []))
             injured_players = injuries.get(home,[]) + injuries.get(away,[])
+            if home_injuries > 1 and pred == 1:
+                confidence = max(0.5, confidence - 0.1 * home_injuries)  # Reduce confidence if home team has multiple injuries
+            elif away_injuries > 1 and pred == 0:
+                confidence = max(0.5, confidence - 0.1 * away_injuries)  # Reduce confidence if away team has multiple injuries
+            recommended = "Yes" if confidence >= CONF_THRESHOLD else "No"
 
             predictions.append({
                 'matchup': f"{away} @ {home}",
