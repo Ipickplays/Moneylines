@@ -42,6 +42,7 @@ def most_common(lst):
     counts = Counter(lst)
     return counts.most_common(1)[0][0]
 
+# === UPDATED ESPN INJURY FETCHER ===
 def fetch_espn_injuries(league):
     urls = {
         'NFL': 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/injuries',
@@ -49,17 +50,37 @@ def fetch_espn_injuries(league):
         'NHL': 'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/injuries',
         'MLB': 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/injuries'
     }
+
     injured_teams = {}
+
     try:
-        r = requests.get(urls[league])
-        if r.status_code == 200:
-            data = r.json()
-            for team in data.get("teams", []):
-                name = team["team"]["displayName"]
-                injured_players = [p['player']['displayName'] for p in team.get("injuries", [])]
-                injured_teams[name] = injured_players
-    except:
-        pass
+        r = requests.get(urls[league], timeout=10)
+        r.raise_for_status()
+        data = r.json()
+
+        for team_data in data.get("teams", []):
+            team_name = team_data.get("team", {}).get("displayName", "Unknown Team")
+
+            injured_players = []
+            for injury in team_data.get("injuries", []):
+                # Handle both “player” and “athlete” fields
+                player_info = injury.get("player") or injury.get("athlete")
+                if not player_info:
+                    continue
+
+                player_name = player_info.get("displayName", "Unknown Player")
+                position = player_info.get("position", {}).get("abbreviation", "")
+                status = injury.get("status", "")
+                description = injury.get("description", "")
+
+                formatted = f"{player_name} ({position}) - {status}: {description}".strip(" -:")
+                injured_players.append(formatted)
+
+            injured_teams[team_name] = injured_players
+
+    except Exception as e:
+        print(f"Error fetching injuries for {league}: {e}")
+
     return injured_teams
 
 def fetch_odds(sport_key):
@@ -166,7 +187,6 @@ def train_model(df, team_stats, h2h_stats):
     if X and y:
         clf = RandomForestClassifier(n_estimators=150, random_state=42)
         clf.fit(X, y)
-        # Calibrate probabilities
         calibrated_clf = CalibratedClassifierCV(clf, method='isotonic', cv='prefit')
         calibrated_clf.fit(X, y)
         return calibrated_clf
@@ -207,7 +227,6 @@ for league, csv_file in DATA_FILES.items():
         print(f"Insufficient data to train model for {league}. Skipping predictions.")
         continue
 
-    # Fetch Odds API matchups
     sport_keys = {
         'NFL':'americanfootball_nfl',
         'NBA':'basketball_nba',
@@ -219,7 +238,6 @@ for league, csv_file in DATA_FILES.items():
         print(f"No Odds API games found for {league} today.")
         continue
 
-    # Filter yesterday for updating historical CSV
     scores_yesterday = fetch_scores_from_espn(league, yesterday_date)
     for (home, away), score_data in scores_yesterday.items():
         hist_df = pd.concat([hist_df, pd.DataFrame([{
@@ -232,7 +250,6 @@ for league, csv_file in DATA_FILES.items():
         }])], ignore_index=True)
     hist_df.to_csv(csv_file, index=False, encoding='utf-8')
 
-    # Filter games today in Central Time
     games_today = []
     for g in games:
         if 'commence_time' in g:
@@ -244,7 +261,6 @@ for league, csv_file in DATA_FILES.items():
             except:
                 continue
 
-    # Fetch ESPN injuries
     injuries = fetch_espn_injuries(league)
 
     for g in games_today:
@@ -270,7 +286,6 @@ for league, csv_file in DATA_FILES.items():
             except:
                 rest_home, rest_away = 0,0
 
-            # Odds
             home_prices, away_prices = [], []
             for bookmaker in g.get('bookmakers',[]):
                 try:
@@ -285,7 +300,6 @@ for league, csv_file in DATA_FILES.items():
             home_odds = most_common([p for p in home_prices if p is not None]) or "N/A"
             away_odds = most_common([p for p in away_prices if p is not None]) or "N/A"
 
-            # Prediction
             X_input = np.array([[home_form, away_form, home_avg, away_avg, home_allowed, away_allowed,
                                  h2h_home, h2h_away, home_adv, rest_home, rest_away]])
             pred = clf.predict(X_input)[0]
@@ -293,14 +307,13 @@ for league, csv_file in DATA_FILES.items():
             recommended = "Yes" if conf_raw >= CONF_THRESHOLD else "No"
             confidence = round(conf_raw, 2)
 
-            # Adjust prediction based on injuries
             home_injuries = len(injuries.get(home, []))
             away_injuries = len(injuries.get(away, []))
             injured_players = injuries.get(home,[]) + injuries.get(away,[])
             if home_injuries > 1 and pred == 1:
-                confidence = max(0.5, confidence - 0.1 * home_injuries)  # Reduce confidence if home team has multiple injuries
+                confidence = max(0.5, confidence - 0.1 * home_injuries)
             elif away_injuries > 1 and pred == 0:
-                confidence = max(0.5, confidence - 0.1 * away_injuries)  # Reduce confidence if away team has multiple injuries
+                confidence = max(0.5, confidence - 0.1 * away_injuries)
             recommended = "Yes" if confidence >= CONF_THRESHOLD else "No"
 
             predictions.append({
@@ -310,7 +323,7 @@ for league, csv_file in DATA_FILES.items():
                 'recommended_bet': recommended,
                 'home_odds': home_odds,
                 'away_odds': away_odds,
-                'injuries': injured_players
+                'injuries': "<br>".join(injured_players) if injured_players else "None"
             })
 
         except Exception as e:
@@ -353,3 +366,4 @@ os.system('git commit -m "Update predictions"')
 os.system("git push origin main")
 print("Pushed updated index.html to GitHub")
 os.system("shutdown /s /t 60 /f")
+
