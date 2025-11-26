@@ -366,3 +366,4 @@ os.system('git commit -m "Update predictions"')
 os.system("git push origin main")
 print("Pushed updated index.html to GitHub")
 os.system("shutdown /s /t 60 /f")
+
